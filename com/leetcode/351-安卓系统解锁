@@ -1,0 +1,55 @@
+class Solution {
+    
+    public int numberOfPatterns(int m, int n) {
+        int num =0;
+        for( int len =m ;len<=n ;len ++) {
+            boolean[] used = new boolean[9];
+            num = num + calNumber(-1,len,used);
+        }
+        return num;
+        
+    }
+    
+    public int calNumber( int last , int len  ,boolean[] used) {
+        //终止条件
+        if(len == 0){
+            return 1;
+        }
+        int num = 0;
+        for( int pos =0 ; pos <=8 ;pos ++) {
+            if( isValid(pos,last,used) ){
+                //如果可以链接，链接后判断下一个
+                used[pos]=true;
+                num = num + calNumber(pos,len-1,used);
+                //执行后清除本次痕迹
+                used[pos]=false;
+            }
+        }
+        return num;
+        
+    }
+    
+    //判断 从last 到pos 位置是否可以连
+    public boolean isValid(int pos ,int last,boolean[] used) {
+        //初始化判断
+        if( last == -1 ) {
+            return true;
+        }
+        if( used[pos] ) {
+            return false;
+        }
+        //如果是奇数，不会有交叉的情况
+        if( (pos+last) % 2 != 0 ) {
+            return true;
+        }
+        //排除四个角
+        if( (pos + last)/2 ==4 ) {
+            return used[4];
+        }
+        //判断同行或者同列。如果既不同行 也不同列说明是斜对角，即去除了四个角，都是可以的
+        if( ( pos%3 != last %3 ) && (pos/3 != last/3 ) ) {
+            return true;
+        }
+        return used[ (pos+last)/2 ];
+    }
+}
